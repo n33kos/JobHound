@@ -1,0 +1,14 @@
+<div class="mdl-grid">
+	<div class="mdl-cell mdl-cell--2-col"></div>
+	<div class="mdl-cell mdl-cell--8-col">
+		<form class="configForm text-center" method="post">
+			<% if params[:config] %>
+				Saved Config.<br>
+			<% end %>
+			<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit">
+			  Save Config
+			</button>
+			<pre><textarea class="configTextArea font-14" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="config"><%= File.read('./config') %></textarea></pre>
+		</form>
+	</div>
+</div>

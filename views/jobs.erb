@@ -1,0 +1,56 @@
+<div class="mdl-grid">
+	<div class="mdl-cell mdl-cell--2-col"></div>
+	<div class="mdl-cell mdl-cell--8-col">
+		<form class="scrapeForm text-center" method="post">
+			<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit">
+			  Scrape Listings
+			</button>
+		</form>
+		<br>
+		<br>
+		<div class="listings">
+			<% if listings.kind_of?(Array) %>
+				<% listings.each do |listing| %>
+					<div class="listing">
+						<h4 style="margin-bottom:0;"><a href="<%= listing.url %>"><%= listing.title %></a></h4>
+						<span style="font-size:10px;"><a href="<%= listing.source %>"><%= listing.source %></a></span>
+						<div style="font-size:12px;color:green;"><%= listing.employer %> - <%= listing.location %> - <%= listing.date_posted %></div>
+						<div class="description"><%= listing.summary %></div>
+					</div>
+				<% end %>
+			<% end %>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">	
+jQuery(document).ready(function($){
+  $('.scrapeForm').on('submit',function (event) {
+    $listings = $('.listings');
+    event.preventDefault();
+    $listings.html("<div class='text-center'>Scraping listings...<br><div class='uil-ripple-css' style='transform:scale(0.6);'><div></div><div></div></div></div>");
+    $.ajax({
+      url: '/jobs/scrape',
+      dataType: 'json',
+      contentType: 'application/json',
+      type: 'POST',
+      data : $('.scrapeForm').serialize(),
+      accepts: "application/json",
+      success: function(json) {
+      	$listings.hide();
+      	$listings.html('<div class="text-center">Scraped '+json.length+' Listings.</div>');
+		$.each( json, function( key, value ) {
+			$listings.append(
+				'<div class="listing">'
+				+'<h4 style="margin-bottom:0;"><a href="'+value.url+'">'+value.title+'</a></h4>'
+				+'<span style="font-size:10px;"><a href="'+value.source+'">'+value.source+'</a></span>'
+				+'<div style="font-size:12px;color:green;">'+value.employer+' - '+value.location+' - '+value.date_posted+'</div>'
+				+'<div class="description">'+value.summary+'</div>'
+				+'</div>'
+			);
+		});
+		$listings.fadeIn();
+      }
+    });
+  });
+});
+</script>
