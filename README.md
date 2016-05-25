@@ -7,10 +7,12 @@ A web interface wrapper which leverages a lite version of PosAg to configure and
 	- sinatra
 	- launchy
 	- nokogiri
+	- sqlite3
 - Modules:
 	- open-uri
 	- openssl
 	- yaml
+	- json
 
 
 1. Run ```ruby jobhound.rb```. This will automatically start a local web server and navigate to http://localhost:4567 with JobHound running
@@ -26,5 +28,6 @@ A web interface wrapper which leverages a lite version of PosAg to configure and
 > - ```employer_css_path``` - The CSS selector for the listing employer relative to entry_css_path
 > - ```location_css_path``` - The CSS selector for the listing location relative to entry_css_path
 > - ```date_posted_css_path``` - The CSS selector for the listing post date relative to entry_css_path
+> - ```ignore_after_regex``` - A regex pattern to remove from the url upon parsing
 
 3. Go to the "Jobs" page and hit the "Scrape Listings" button. This may take a minute depending on how many sources you are scraping from

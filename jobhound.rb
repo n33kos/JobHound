@@ -1,5 +1,7 @@
+require "./posag_lite.rb";
 require 'sinatra'
 require 'launchy'
+require 'json'
 
 #-------------Routes-----------------
 get '/' do
@@ -17,14 +19,22 @@ post '/config' do
 end
 
 get '/jobs' do
+  $listings = get_all_listings "scraped_listings.sqlite"
+	while (!$listings.kind_of?(Array) and $listings != false)
+	  sleep(1)
+	end
   erb :jobs, :locals => {:listings => $listings}
 end
 
 post '/jobs/scrape', :provides => :json do
-	load "./posag_lite.rb";
-	while (!$listings.kind_of?(Array))
+	sources = define_sources
+	$listings = aggregate_listings sources
+	save_listings "scraped_listings.sqlite", $listings
+
+	while (!$listings.kind_of?(Array) and $listings != false)
 	  sleep(1)
 	end
+
 	data = []
 	$listings.each do |listing|
 		data.push({
