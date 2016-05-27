@@ -3,12 +3,15 @@ require 'open-uri'
 require 'openssl'
 require 'yaml'
 require 'sqlite3'
+require 'chronic'
 
 #---------------Classes--------------
 class ScrapeSource
-	attr_accessor :base_url, :search_url, :entry_css_path, :url_css_path, :title_css_path, :summary_css_path, :desc_css_path, :employer_css_path, :location_css_path, :date_posted_css_path, :ignore_after_regex
+	attr_accessor :base_url, :search_url, :listing_url_regex, :date_posted_regex, :entry_css_path, :url_css_path, :title_css_path, :summary_css_path, :desc_css_path, :employer_css_path, :location_css_path, :date_posted_css_path
 	@base_url = ""
 	@search_url = ""
+	@listing_url_regex = []
+	@date_posted_regex = []
 	@entry_css_path = ""
 	@url_css_path = ""
 	@title_css_path = ""
@@ -17,7 +20,6 @@ class ScrapeSource
 	@employer_css_path = ""
 	@location_css_path = ""
 	@date_posted_css_path = ""
-	@ignore_after_regex = ""
 end
 
 class PositionListing
@@ -29,7 +31,7 @@ class PositionListing
 	@employer = ""
 	@location = ""
 	@source = ""
-	@date_posted = ""
+	@date_posted = DateTime.now
 end
 
 #------------Functions----------------
@@ -40,6 +42,8 @@ def define_sources
 		new_source = ScrapeSource.new
 		new_source.base_url = source[1][:base_url].to_s
 		new_source.search_url = source[1][:search_url].to_s
+		new_source.listing_url_regex = source[1][:listing_url_regex]
+		new_source.date_posted_regex = source[1][:date_posted_regex]
 		new_source.entry_css_path = source[1][:entry_css_path].to_s
 		new_source.url_css_path = source[1][:url_css_path].to_s
 		new_source.title_css_path = source[1][:title_css_path].to_s
@@ -48,7 +52,6 @@ def define_sources
 		new_source.employer_css_path = source[1][:employer_css_path].to_s
 		new_source.location_css_path = source[1][:location_css_path].to_s
 		new_source.date_posted_css_path = source[1][:date_posted_css_path].to_s
-		new_source.ignore_after_regex = source[1][:ignore_after_regex].to_s
 		sources.push(new_source)
 	end
 	return sources
@@ -69,7 +72,7 @@ def aggregate_listings sources
 			begin
 				#Process and add URL to listing object
 				prep_url = extract.css(source.url_css_path)[0]['href'].to_s
-				prep_url = prep_url.sub /#{source.ignore_after_regex}/, ''
+				source.listing_url_regex.each {|replacement| prep_url.gsub!(/#{replacement[1][:pattern]}/, replacement[1][:replace])}
 
 				if prep_url.include? "//"
 					url = prep_url
@@ -99,7 +102,12 @@ def aggregate_listings sources
 					listing.location = extract.css(source.location_css_path)[0].content
 				end
 				if !source.date_posted_css_path.empty?
-					listing.date_posted = extract.css(source.date_posted_css_path)[0].content
+					date_rough = extract.css(source.date_posted_css_path)[0].content
+					if !source.date_posted_regex.nil?
+						source.date_posted_regex.each {|replacement| date_rough.gsub!(/#{replacement[1][:pattern]}/, replacement[1][:replace])}
+					end
+					date_parsed = Chronic.parse(date_rough, :context => :past)
+					listing.date_posted = date_parsed
 				end
 
 				#Add listing to listings array
@@ -119,16 +127,15 @@ end
 
 def save_listings database_file, listings
 	if File.file?(database_file)
-		listing_db = SQLite3::Database.open database_file
+		db = SQLite3::Database.open database_file
 
 		listings.each do |listing|
-			listing_db.execute("REPLACE INTO listings (url, title, summary, desc, employer, location, source, date_posted) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [listing.url, listing.title, listing.summary, listing.desc, listing.employer, listing.location, listing.source, listing.date_posted])
+			db.execute("INSERT OR REPLACE INTO listings (url, title, summary, desc, employer, location, source, date_posted, viewed_bit, favorite_bit, dismissed_bit, applied_bit, followup_bit, interviewed_bit)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [listing.url, listing.title, listing.summary, listing.desc, listing.employer, listing.location, listing.source, listing.date_posted.to_s])
 		end
-
 	else
-		listing_db = SQLite3::Database.new database_file
-		rows = listing_db.execute <<-SQL
+		db = SQLite3::Database.new database_file
+		rows = db.execute <<-SQL
 		  create table listings (
 			url varchar(255) PRIMARY KEY,
 			title varchar(255),
@@ -137,25 +144,49 @@ def save_listings database_file, listings
 			employer varchar(255),
 			location varchar(255),
 			source varchar(255),
-			date_posted varchar(255)
+			date_posted DATETIME,
+			viewed_bit int(255),
+			favorite_bit int(255),
+			dismissed_bit int(255),
+			applied_bit int(255),
+			followup_bit int(255),
+			interviewed_bit int(255)
 		  );
 		SQL
 
 		listings.each do |listing|
-			listing_db.execute("REPLACE INTO listings (url, title, summary, desc, employer, location, source, date_posted) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [listing.url, listing.title, listing.summary, listing.desc, listing.employer, listing.location, listing.source, listing.date_posted])
+			db.execute("INSERT OR REPLACE INTO listings (url, title, summary, desc, employer, location, source, date_posted, viewed_bit, favorite_bit, dismissed_bit, applied_bit, followup_bit, interviewed_bit) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [listing.url, listing.title, listing.summary, listing.desc, listing.employer, listing.location, listing.source, listing.date_posted.to_s])
 		end
 
 	end
-	listing_db.close
+	db.close
 end
 
-def get_all_listings database_file
-	if File.file?(database_file)
-		listing_db = SQLite3::Database.open database_file
+def save_status database_file, listing_url, status_column, status
+	db = SQLite3::Database.open database_file
+	if !status_column.nil?
+		query = "UPDATE listings SET "+status_column+"=\""+status+"\" WHERE url = \""+listing_url+"\" "
+		puts query
+		db.execute(query)
+	end
+	db.close
+	return status
+end
 
+def get_all_listings database_file, orderby, direction
+	if File.file?(database_file)
+		query = "select * from listings"
+		if !orderby.nil?
+			query += " order by "+orderby
+		end
+		if !direction.nil?
+			query += " "+direction 
+		end
+
+		db = SQLite3::Database.open database_file
 		listings = []
-		listing_db.execute( "select * from listings" ) do |row|
+		db.execute( query ) do |row|
 			listing = PositionListing.new
 			listing.url = row[0]
 			listing.title = row[1]
@@ -167,7 +198,40 @@ def get_all_listings database_file
 			listing.date_posted = row[7]
 			listings.push(listing)
 		end
-		listing_db.close
+		db.close
+
+		return listings
+	else
+		puts "Database "+database_file+" not found."
+		return false
+	end
+end
+
+def get_favorite_listings database_file, orderby, direction
+	if File.file?(database_file)
+		query = "select * from listings where favorite_bit = 1"
+		if !orderby.nil?
+			query += " order by "+orderby
+		end
+		if !direction.nil?
+			query += " "+direction 
+		end
+
+		db = SQLite3::Database.open database_file
+		listings = []
+		db.execute( query ) do |row|
+			listing = PositionListing.new
+			listing.url = row[0]
+			listing.title = row[1]
+			listing.summary = row[2]
+			listing.desc = row[3]
+			listing.employer = row[4]
+			listing.location = row[5]
+			listing.source = row[6]
+			listing.date_posted = row[7]
+			listings.push(listing)
+		end
+		db.close
 
 		return listings
 	else

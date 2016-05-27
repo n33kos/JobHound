@@ -19,7 +19,7 @@ post '/config' do
 end
 
 get '/jobs' do
-  $listings = get_all_listings "scraped_listings.sqlite"
+  $listings = get_all_listings "jobhound.sqlite", params[:orderby], params[:direction]
 	while (!$listings.kind_of?(Array) and $listings != false)
 	  sleep(1)
 	end
@@ -29,7 +29,8 @@ end
 post '/jobs/scrape', :provides => :json do
 	sources = define_sources
 	$listings = aggregate_listings sources
-	save_listings "scraped_listings.sqlite", $listings
+	save_listings "jobhound.sqlite", $listings
+	$listings = get_all_listings "jobhound.sqlite", params[:orderby], params[:direction]
 
 	while (!$listings.kind_of?(Array) and $listings != false)
 	  sleep(1)
@@ -48,6 +49,21 @@ post '/jobs/scrape', :provides => :json do
 		})
 	end
 	halt 200, data.to_json
+end
+
+get '/favorites' do
+	$listings = get_favorite_listings "jobhound.sqlite", params[:orderby], params[:direction]
+	while (!$listings.kind_of?(Array) and $listings != false)
+		sleep(1)
+	end
+	erb :favorites, :locals => {:listings => $listings}
+end
+
+post '/favorites/save', :provides => :json do
+	puts params[:url]
+	puts params[:set_value]
+	status = save_status "jobhound.sqlite", params[:url], "favorite_bit", params[:set_value]
+	halt 200, status.to_json
 end
 
 get '/shutdown' do
