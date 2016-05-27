@@ -17,7 +17,43 @@ header h1 a {
   box-sizing: border-box;
   font-family: monospace;
 }
-
+.listing {
+  position: relative;
+  transition: all 1s;
+}
+.listing.dismissed {
+    height: 50px;
+    overflow: hidden;
+    background: #F1F1F1;
+    opacity: 0.5;
+}
+.listing .date-posted {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: green;
+}
+.listing .dismiss {
+  position: absolute;
+  right: 120px;
+  top: 7px;
+  color: #840000;
+}
+.listing h4 {
+  margin-bottom: 0;
+  width: calc(100% - 150px);
+}
+.listing .interested {
+  position: absolute;
+  right: 90px;
+  top: 7px;
+}
+.listing .source {
+  font-size: 10px;
+}
+.listing .source a {
+  color: #aaa;
+}
 //-----------------HELPERS-------------
 .text-left {
 	text-align: left;
@@ -69,6 +105,9 @@ header h1 a {
 }
 .no-underline {
   text-decoration: none;
+}
+.break-word {
+  word-break: break-word;
 }
 
 //--------------LOADING ICON--------------

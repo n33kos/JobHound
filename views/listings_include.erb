@@ -1,0 +1,17 @@
+<div class="listings">
+	<% if listings.kind_of?(Array) %>
+		<% listings.each do |listing| %>
+			<div class="listing <% if listing.dismissed_bit == 1 %>dismissed<% end %>">
+				<h4>
+					<a href="<%= listing.url %>" class="listing-title" target="_blank"><%= listing.title %></a>
+				</h4>
+				<a href="#" class="dismiss fa fa-times-circle<% if listing.dismissed_bit == 1 %><% else %>-o<% end %> font-20 no-underline" data-url="<%= listing.url %>" data-value="<% if listing.dismissed_bit == 1 %>0<% else %>1<% end %>"></a>
+				<a href="#" class="interested fa fa-star<% if listing.interested_bit == 1 %><% else %>-o<% end %> font-20 no-underline" data-url="<%= listing.url %>" data-value="<% if listing.interested_bit == 1 %>0<% else %>1<% end %>"></a>
+				<span class="date-posted"><% if listing.date_posted.kind_of?(DateTime) %><%= listing.date_posted.strftime("%D") %><% else %>Unavailable<% end %></span>
+				<div style="font-size:12px;color:green;"><%= listing.employer %> - <%= listing.location %></div>
+				<div class="description"><%= listing.summary %></div>
+				<span class="source"><a href="<%= listing.source %>" target="_blank" class="break-word"><%= listing.source %></a></span>
+			</div>
+		<% end %>
+	<% end %>
+</div>

@@ -2,19 +2,21 @@
 <html>
 	<head>
 		<title>JobHound</title>
-		<link rel="stylesheet" href="/font-awesome.min.css">
+		<link rel="stylesheet" href="/css/font-awesome.min.css">
 		<link rel="stylesheet" href="/mdl/material.min.css">
 		<script src="/mdl/material.min.js"></script>
-		<link rel="stylesheet" href="/style.css">
-		<script type="text/javascript" src="/jquery-2.2.4.min.js"></script>
 		<link href='https://fonts.googleapis.com/css?family=Raleway:600,400,200' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/css/style.css">
+		<script type="text/javascript" src="/js/jquery-2.2.4.min.js"></script>
+		<script src="/js/actions.js"></script>
 	</head>
 	<body>
 		<header>
 			<h1 class="text-center"><a href="/" title="JobHound">JobHound</a><a href="/config" title="Configure JobHound" class="black inline"><i class="fa fa-cog font-16"></i></a></h1>
-			<div class="text-center">
-				<a href="/jobs" title="Jobs">Jobs</a>
-				<a href="/favorites" title="Favorites">Favorites</a>
+			<div class="menu text-center">
+				<a href="/jobs" title="All Jobs">All Jobs</a>&nbsp;|
+				<a href="/interested" title="Interested">Interested</a>&nbsp;|
+				<a href="/dismissed" title="Dismissed">Dismissed</a>
 			</div>
 		</header>
 		<%= yield %>

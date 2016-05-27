@@ -5,9 +5,11 @@ def save_listings database_file, listings
 		db = SQLite3::Database.open database_file
 
 		listings.each do |listing|
-			db.execute("INSERT OR REPLACE INTO listings (url, title, summary, desc, employer, location, source, date_posted, viewed_bit, favorite_bit, dismissed_bit, applied_bit, followup_bit, interviewed_bit)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [listing.url, listing.title, listing.summary, listing.desc, listing.employer, listing.location, listing.source, listing.date_posted.to_s])
+			db.execute("INSERT OR REPLACE INTO listings (url, title, summary, desc, employer, location, source, date_posted, viewed_bit, interested_bit, dismissed_bit, applied_bit, followup_bit, interviewed_bit)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+            [listing.url, listing.title, listing.summary, listing.desc, listing.employer, listing.location, listing.source, listing.date_posted.to_s, listing.viewed_bit, listing.interested_bit, listing.dismissed_bit, listing.applied_bit, listing.followup_bit, listing.interviewed_bit])
 		end
+
 	else
 		db = SQLite3::Database.new database_file
 		rows = db.execute <<-SQL
@@ -21,7 +23,7 @@ def save_listings database_file, listings
 			source varchar(255),
 			date_posted DATETIME,
 			viewed_bit int(255),
-			favorite_bit int(255),
+			interested_bit int(255),
 			dismissed_bit int(255),
 			applied_bit int(255),
 			followup_bit int(255),
@@ -30,8 +32,9 @@ def save_listings database_file, listings
 		SQL
 
 		listings.each do |listing|
-			db.execute("INSERT OR REPLACE INTO listings (url, title, summary, desc, employer, location, source, date_posted, viewed_bit, favorite_bit, dismissed_bit, applied_bit, followup_bit, interviewed_bit) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [listing.url, listing.title, listing.summary, listing.desc, listing.employer, listing.location, listing.source, listing.date_posted.to_s])
+			db.execute("INSERT OR REPLACE INTO listings (url, title, summary, desc, employer, location, source, date_posted, viewed_bit, interested_bit, dismissed_bit, applied_bit, followup_bit, interviewed_bit)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+            [listing.url, listing.title, listing.summary, listing.desc, listing.employer, listing.location, listing.source, listing.date_posted.to_s, listing.viewed_bit, listing.interested_bit, listing.dismissed_bit, listing.applied_bit, listing.followup_bit, listing.interviewed_bit])
 		end
 
 	end
@@ -59,7 +62,15 @@ def get_all_listings database_file, orderby, direction
 			listing.employer = row[4]
 			listing.location = row[5]
 			listing.source = row[6]
-			listing.date_posted = row[7]
+			if !row[7].empty?
+				listing.date_posted = DateTime.parse(row[7].to_s)
+			end
+			listing.viewed_bit = row[8]
+			listing.interested_bit = row[9]
+			listing.dismissed_bit = row[10]
+			listing.applied_bit = row[11]
+			listing.followup_bit = row[12]
+			listing.interviewed_bit = row[13]
 			listings.push(listing)
 		end
 		db.close
@@ -71,9 +82,9 @@ def get_all_listings database_file, orderby, direction
 	end
 end
 
-def get_favorite_listings database_file, orderby, direction
+def get_status_listings database_file, status_column, orderby, direction
 	if File.file?(database_file)
-		query = "select * from listings where favorite_bit = 1"
+		query = "select * from listings where "+status_column+" = 1"
 		if !orderby.nil?
 			query += " order by "+orderby
 		end
@@ -92,7 +103,15 @@ def get_favorite_listings database_file, orderby, direction
 			listing.employer = row[4]
 			listing.location = row[5]
 			listing.source = row[6]
-			listing.date_posted = row[7]
+			if !row[7].empty?
+				listing.date_posted = DateTime.parse(row[7].to_s)
+			end
+			listing.viewed_bit = row[8]
+			listing.interested_bit = row[9]
+			listing.dismissed_bit = row[10]
+			listing.applied_bit = row[11]
+			listing.followup_bit = row[12]
+			listing.interviewed_bit = row[13]
 			listings.push(listing)
 		end
 		db.close

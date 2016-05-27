@@ -1,81 +1,13 @@
 <div class="mdl-grid">
 	<div class="mdl-cell mdl-cell--2-col"></div>
 	<div class="mdl-cell mdl-cell--8-col">
+		<hr>
 		<form class="scrapeForm text-center" method="post">
 			<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent scrapeButton" type="submit">
-			  Scrape Listings <i class="fa fa-database margin-left-5"></i>
+			  Scrape Listings <i class="fa fa-database margin-left-5"> (<% if listings.kind_of?(Array) %><%= listings.length %><% else %>0<% end %>)</i>
 			</button>
 		</form>
-		<br>
-		<br>
-		<div class="listings">
-			<% if listings.kind_of?(Array) %>
-				<div class="text-center">Displaying <%= listings.length %> Listings</div>
-				<% listings.each do |listing| %>
-					<div class="listing">
-						<h4 style="margin-bottom:0;">
-							<a href="<%= listing.url %>" target="_blank"><%= listing.title %></a>
-							<a href="#" class="favorite fa fa-heart-o font-20 no-underline" data-url="<%= listing.url %>" data-value="1"></a>
-						</h4>
-						<span style="font-size:10px;"><a href="<%= listing.source %>" target="_blank"><%= listing.source %></a></span>
-						<div style="font-size:12px;color:green;"><%= listing.employer %> - <%= listing.location %> - <%= listing.date_posted %></div>
-						<div class="description"><%= listing.summary %></div>
-					</div>
-				<% end %>
-			<% end %>
-		</div>
+		<hr>
+		<%= erb :listings_include, :locals => {:listings => $listings} %>
 	</div>
 </div>
-<script type="text/javascript">	
-jQuery(document).ready(function($){
-	//-------------------Scrape Button------------------
-	$('.scrapeForm').on('submit',function (e) {
-		$listings = $('.listings');
-		$button = $('.scrapeButton');
-		e.preventDefault();
-		$listings.html("<div class='text-center'>Scraping listings...<br><div class='uil-ripple-css' style='transform:scale(0.6);'><div></div><div></div></div></div>");
-		$button.html("Scrape Listings <i class=\"fa fa-ellipsis-h margin-left-5\"></i>");
-		$.ajax({
-		  url: '/jobs/scrape',
-		  dataType: 'json',
-		  contentType: 'application/json',
-		  type: 'POST',
-		  data : $('.scrapeForm').serialize(),
-		  accepts: "application/json",
-		  success: function(json) {
-		  	$listings.hide();
-		  	$listings.html('<div class="text-center">Displaying '+json.length+' Listings.</div>');
-		  	$button.html("Scrape Listings <i class=\"fa fa-database margin-left-5\"></i>");
-			$.each( json, function( key, value ) {
-				$listings.append(
-					'<div class="listing">'
-					+'<h4 style="margin-bottom:0;"><a href="'+value.url+'">'+value.title+'</a></h4>'
-					+'<span style="font-size:10px;"><a href="'+value.source+'">'+value.source+'</a></span>'
-					+'<div style="font-size:12px;color:green;">'+value.employer+' - '+value.location+' - '+value.date_posted+'</div>'
-					+'<div class="description">'+value.summary+'</div>'
-					+'</div>'
-				);
-			});
-			$listings.fadeIn();
-		  }
-		});
-	});
-
-	//---------------------------Favorite Button---------------------------------
-	$('.favorite').click(function(e){
-		e.preventDefault();
-		that = this
-		data_url = $(this).data("url");
-		data_value = $(this).data("value");
-		$.ajax({
-		  url: '/favorites/save',
-		  type: 'POST',
-		  data: { url: data_url, set_value: data_value},
-		  accepts: "application/json",
-		  success: function(json) {
-		  	$(that).removeClass("fa-heart-o").addClass("fa-heart");
-		  }
-		});
-	});
-});
-</script>
