@@ -1,5 +1,5 @@
 # JobHound
-A web interface wrapper which leverages a lite version of PosAg to configure and scrape job listings from specific search URLs
+A local web app to scrape and manage job listings from configurable search URLs.
 
 # Dependencies
 - Ruby >=v2.0.0
