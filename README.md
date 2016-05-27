@@ -8,16 +8,18 @@ A web interface wrapper which leverages a lite version of PosAg to configure and
 	- launchy
 	- nokogiri
 	- sqlite3
+	- chronic
 - Modules:
 	- open-uri
 	- openssl
 	- yaml
 	- json
 
+1. Run ```bundle install``` in the base directory to install any gem dependencies you may be missing
 
-1. Run ```ruby jobhound.rb```. This will automatically start a local web server and navigate to http://localhost:4567 with JobHound running
+2. Run ```ruby jobhound.rb```. This will automatically start a local web server and navigate to http://localhost:4567 with JobHound running
 
-2. Configure scraping sources by modifying ```config```:
+3. Configure scraping sources by modifying ```config```:
 > - ```base_url``` - The base url for your scrape source. This is used for rebuilding partial urls.
 > - ```search_url``` - The specific search page you wish to scrape listings from.
 > -
