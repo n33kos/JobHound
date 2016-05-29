@@ -12,7 +12,7 @@
 					<option value="followup" <% if listing.status == "followup" %>selected="selected"<% end %>>Followed Up</option>
 					<option value="interviewed" <% if listing.status == "interviewed" %>selected="selected"<% end %>>Interviewed</option>
 				</select>
-				<a href="#" class="dismiss fa fa-times-circle<% if listing.dismissed_bit == 1 %><% else %>-o<% end %> font-20 no-underline" data-url="<%= listing.url %>" data-value="<% if listing.dismissed_bit == 1 %>0<% else %>1<% end %>"></a>
+				<a href="#" class="dismiss fa <% if listing.dismissed_bit == 1 %>fa-plus-square<% else %>fa-minus-square<% end %> font-20 no-underline" data-url="<%= listing.url %>" data-value="<% if listing.dismissed_bit == 1 %>0<% else %>1<% end %>"></a>
 				<span class="date-posted"><% if listing.date_posted.kind_of?(DateTime) %><%= listing.date_posted.strftime("%D") %><% else %>Unavailable<% end %></span>
 				<div style="font-size:12px;color:green;"><%= listing.employer %> - <%= listing.location %></div>
 				<div class="description"><%= listing.summary %></div>

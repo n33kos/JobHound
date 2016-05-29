@@ -19,7 +19,7 @@ header h1 a {
 }
 #sort-menu {
   position: absolute;
-  left: 0;
+  right: 0;
   top: 5px;
 }
 
@@ -28,6 +28,7 @@ header h1 a {
   position: relative;
   transition: all 1s;
   padding: 10px;
+  padding-right: 125px;
 }
 .listing.dismissed {
   height: 45px;
@@ -49,24 +50,25 @@ header h1 a {
 }
 .listing .date-posted {
   position: absolute;
-  top: 5px;
+  top: 15px;
   right: 35px;
   color: green;
 }
 .listing .dismiss {
   position: absolute;
   right: 10px;
-  top: 5px;
-  color: #840000;
+  top: 15px;
+  color: #D0D0D0;
 }
 .listing h4 {
   margin: 0;
-  width: calc(100% - 200px);
 }
 .listing .status-dropdown {
   position: absolute;
-  right: 110px;
-  top: 7px;
+  right: 10px;
+  top: 40px;
+  width: 100px;
+  height: 20px;
 }
 .listing .source {
   font-size: 10px;

@@ -21,10 +21,10 @@ jQuery(document).ready(function($){
 				
 				listing_classes = value.status
 				if (value.dismissed_bit != 1){
-					dismissed_append = "-o"
+					dismissed_icon = "fa-minus-square"
 					dismissed_value = "0"
 				}else{
-					dismissed_append = "";
+					dismissed_icon = "fa-plus-square";
 					dismissed_value = "1"
 					listing_classes += " dismissed"
 				}
@@ -43,7 +43,7 @@ jQuery(document).ready(function($){
 					+'<option value="followup" '+(value.status == "followup" ? "selected=\"selected\"" : "")+'>Followed Up</option>'
 					+'<option value="interviewed" '+(value.status == "interviewed" ? "selected=\"selected\"" : "")+'>Interviewed</option>'
 					+'</select>'
-					+'<a href="#" class="dismiss fa fa-times-circle'+dismissed_append+' font-20 no-underline" data-url="'+value.url+'" data-value="'+dismissed_value+'"></a>'
+					+'<a href="#" class="dismiss fa '+dismissed_icon+' font-20 no-underline" data-url="'+value.url+'" data-value="'+dismissed_value+'"></a>'
 					+'<span class="date-posted">'+(value.date_posted || "Unavailable" )+'</span>'
 					+'<div style="font-size:12px;color:green;">'+value.employer+' - '+value.location+'</div>'
 					+'<div class="description">'+value.summary+'</div>'
@@ -100,9 +100,9 @@ jQuery(document).ready(function($){
 				accepts: "application/json",
 				success: function(json) {
 					if (json == 1){
-						$(that).data('value', 0).removeClass("fa-times-circle-o").addClass("fa-times-circle").parents('.listing').addClass("dismissed");
+						$(that).data('value', 0).removeClass("fa-minus-square").addClass("fa-plus-square").parents('.listing').addClass("dismissed");
 					}else{
-						$(that).data('value', 1).removeClass("fa-times-circle").addClass("fa-times-circle-o").parents('.listing').removeClass("dismissed");
+						$(that).data('value', 1).removeClass("fa-plus-square").addClass("fa-minus-square").parents('.listing').removeClass("dismissed");
 					}
 				}
 			});
