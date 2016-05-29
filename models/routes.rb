@@ -49,50 +49,65 @@ post '/jobs/scrape', :provides => :json do
 			"source" => listing.source,
 			"date_posted" => date,
 			"viewed_bit" => listing.viewed_bit,
-			"interested_bit" => listing.interested_bit,
 			"dismissed_bit" => listing.dismissed_bit,
-			"applied_bit" => listing.applied_bit,
-			"followup_bit" => listing.followup_bit,
-			"interviewed_bit" => listing.interviewed_bit
+			"status" => listing.status
 		})
 	end
 	halt 200, data.to_json
 end
 
 get '/interested' do
-	$listings = get_status_listings "./sql/jobhound.sqlite", "interested_bit", params[:orderby], params[:direction]
+	$listings = get_listings_by_status "./sql/jobhound.sqlite", "interested", params[:orderby], params[:direction]
 	while (!$listings.kind_of?(Array) and $listings != false)
 		sleep(1)
 	end
 	erb :interested, :locals => {:listings => $listings}
 end
 
+get '/applied' do
+	$listings = get_listings_by_status "./sql/jobhound.sqlite", "applied", params[:orderby], params[:direction]
+	while (!$listings.kind_of?(Array) and $listings != false)
+		sleep(1)
+	end
+	erb :applied, :locals => {:listings => $listings}
+end
+
+get '/followup' do
+	$listings = get_listings_by_status "./sql/jobhound.sqlite", "followup", params[:orderby], params[:direction]
+	while (!$listings.kind_of?(Array) and $listings != false)
+		sleep(1)
+	end
+	erb :followup, :locals => {:listings => $listings}
+end
+
+get '/interviewed' do
+	$listings = get_listings_by_status "./sql/jobhound.sqlite", "interviewed", params[:orderby], params[:direction]
+	while (!$listings.kind_of?(Array) and $listings != false)
+		sleep(1)
+	end
+	erb :interviewed, :locals => {:listings => $listings}
+end
+
 get '/dismissed' do
-	$listings = get_status_listings "./sql/jobhound.sqlite", "dismissed_bit", params[:orderby], params[:direction]
+	$listings = get_listings_by_bit "./sql/jobhound.sqlite", "dismissed_bit", params[:orderby], params[:direction]
 	while (!$listings.kind_of?(Array) and $listings != false)
 		sleep(1)
 	end
 	erb :dismissed, :locals => {:listings => $listings}
 end
 
-post '/listings/viewed', :provides => :json do
-	puts params[:url]
-	puts params[:set_value]
-	status = save_status "./sql/jobhound.sqlite", params[:url], "viewed_bit", params[:set_value]
-	halt 200, status.to_json
-end
-
-post '/listings/interested', :provides => :json do
-	puts params[:url]
-	puts params[:set_value]
-	status = save_status "./sql/jobhound.sqlite", params[:url], "interested_bit", params[:set_value]
+post '/listings/setstatus', :provides => :json do
+	status = save_status "./sql/jobhound.sqlite", params[:url], params[:set_value]
 	halt 200, status.to_json
 end
 
 post '/listings/dismissed', :provides => :json do
-	puts params[:url]
-	puts params[:set_value]
-	status = save_status "./sql/jobhound.sqlite", params[:url], "dismissed_bit", params[:set_value]
+	status = save_bit "./sql/jobhound.sqlite", params[:url], "dismissed_bit", params[:set_value]
+	halt 200, status.to_json
+end
+
+post '/listings/viewed', :provides => :json do
+	status = save_bit "./sql/jobhound.sqlite", params[:url], "viewed_bit", params[:set_value]
 	halt 200, status.to_json
 end
 

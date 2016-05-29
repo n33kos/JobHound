@@ -1,12 +1,18 @@
 <div class="listings">
 	<% if listings.kind_of?(Array) %>
 		<% listings.each do |listing| %>
-			<div class="listing <% if listing.dismissed_bit == 1 %>dismissed<% end %>">
+			<div class="listing <%=listing.status%> <% if listing.dismissed_bit == 1 %>dismissed<% end %> <% if listing.viewed_bit == 1 %>viewed<% end %>">
 				<h4>
 					<a href="<%= listing.url %>" class="listing-title" target="_blank"><%= listing.title %></a>
 				</h4>
+				<select class="status-dropdown" data-url="<%= listing.url %>">
+					<option>Select Status</option>
+					<option value="interested" <% if listing.status == "interested" %>selected="selected"<% end %>>Interested</option>
+					<option value="applied" <% if listing.status == "applied" %>selected="selected"<% end %>>Applied</option>
+					<option value="followup" <% if listing.status == "followup" %>selected="selected"<% end %>>Followed Up</option>
+					<option value="interviewed" <% if listing.status == "interviewed" %>selected="selected"<% end %>>Interviewed</option>
+				</select>
 				<a href="#" class="dismiss fa fa-times-circle<% if listing.dismissed_bit == 1 %><% else %>-o<% end %> font-20 no-underline" data-url="<%= listing.url %>" data-value="<% if listing.dismissed_bit == 1 %>0<% else %>1<% end %>"></a>
-				<a href="#" class="interested fa fa-star<% if listing.interested_bit == 1 %><% else %>-o<% end %> font-20 no-underline" data-url="<%= listing.url %>" data-value="<% if listing.interested_bit == 1 %>0<% else %>1<% end %>"></a>
 				<span class="date-posted"><% if listing.date_posted.kind_of?(DateTime) %><%= listing.date_posted.strftime("%D") %><% else %>Unavailable<% end %></span>
 				<div style="font-size:12px;color:green;"><%= listing.employer %> - <%= listing.location %></div>
 				<div class="description"><%= listing.summary %></div>

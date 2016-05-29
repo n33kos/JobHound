@@ -17,35 +17,55 @@ header h1 a {
   box-sizing: border-box;
   font-family: monospace;
 }
+#sort-menu {
+  position: absolute;
+  left: 0;
+  top: 5px;
+}
+
+/*---------------------LISTINGS----------------*/
 .listing {
   position: relative;
   transition: all 1s;
+  padding: 10px;
 }
 .listing.dismissed {
-    height: 50px;
-    overflow: hidden;
-    background: #F1F1F1;
-    opacity: 0.5;
+  height: 45px;
+  overflow: hidden;
+  background: #F1F1F1;
+  opacity: 0.5;
+  margin-bottom: 0px;
+}
+.listing .listing-title:after {
+  font: normal normal normal 14px/1 FontAwesome;
+  text-decoration: none;
+  content: "";
+  color: gray;
+  display: inline-block;
+  margin-left: 5px;
+}
+.listing:not(.viewed) .listing-title:after {
+  content: "";
 }
 .listing .date-posted {
   position: absolute;
   top: 5px;
-  right: 5px;
+  right: 35px;
   color: green;
 }
 .listing .dismiss {
   position: absolute;
-  right: 120px;
-  top: 7px;
+  right: 10px;
+  top: 5px;
   color: #840000;
 }
 .listing h4 {
-  margin-bottom: 0;
-  width: calc(100% - 150px);
+  margin: 0;
+  width: calc(100% - 200px);
 }
-.listing .interested {
+.listing .status-dropdown {
   position: absolute;
-  right: 90px;
+  right: 110px;
   top: 7px;
 }
 .listing .source {
@@ -54,7 +74,7 @@ header h1 a {
 .listing .source a {
   color: #aaa;
 }
-//-----------------HELPERS-------------
+/*-----------------HELPERS-------------*/
 .text-left {
 	text-align: left;
 }
@@ -109,8 +129,11 @@ header h1 a {
 .break-word {
   word-break: break-word;
 }
+.relative {
+  position: relative;
+}
 
-//--------------LOADING ICON--------------
+/*--------------LOADING ICON--------------*/
 @-webkit-keyframes uil-ripple {
   0% {
     width: 0;

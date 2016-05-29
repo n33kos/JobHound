@@ -19,25 +19,31 @@ jQuery(document).ready(function($){
 		  	$button.html("Scrape Listings <i class=\"fa fa-database margin-left-5\"></i> ("+json.length+")");
 			$.each( json, function( key, value ) {
 				
-				interested_append = "";
-				interested_value = "1"
-				if (value.interested_bit != 1){
-					interested_append = "-o"
-					interested_value = "0"
-				}
-
-				dismissed_append = "";
-				dismissed_value = "1"
+				listing_classes = value.status
 				if (value.dismissed_bit != 1){
 					dismissed_append = "-o"
 					dismissed_value = "0"
+				}else{
+					dismissed_append = "";
+					dismissed_value = "1"
+					listing_classes += " dismissed"
+				}
+
+				if(value.viewed_bit == 1){
+					listing_classes += " viewed"
 				}
 
 				$listings.append(
-					'<div class="listing">'
-					+'<h4><a href="'+value.url+'" class="listing-title" target="_blank">'+value.title+'</a>'
-					+'<a href="#" class="dismiss fa fa-times-circle'+dismissed_append+' font-20 no-underline" data-url="'+value.url+'" data-value="'+dismissed_value+'"></a></h4>'
-					+'<a href="#" class="interested fa fa-star'+interested_append+' font-20 no-underline" data-url="'+value.url+'" data-value="'+interested_value+'"></a></h4>'
+					'<div class="listing '+listing_classes+'">'
+					+'<h4><a href="'+value.url+'" class="listing-title" target="_blank">'+value.title+'</a></h4>'
+					+'<select class="status-dropdown" data-url="<%= listing.url %>">'
+					+'<option>Select Status</option>'
+					+'<option value="interested" '+(value.status == "interested" ? "selected=\"selected\"" : "")+'>Interested</option>'
+					+'<option value="applied" '+(value.status == "applied" ? "selected=\"selected\"" : "")+'>Applied</option>'
+					+'<option value="followup" '+(value.status == "followup" ? "selected=\"selected\"" : "")+'>Followed Up</option>'
+					+'<option value="interviewed" '+(value.status == "interviewed" ? "selected=\"selected\"" : "")+'>Interviewed</option>'
+					+'</select>'
+					+'<a href="#" class="dismiss fa fa-times-circle'+dismissed_append+' font-20 no-underline" data-url="'+value.url+'" data-value="'+dismissed_value+'"></a>'
 					+'<span class="date-posted">'+(value.date_posted || "Unavailable" )+'</span>'
 					+'<div style="font-size:12px;color:green;">'+value.employer+' - '+value.location+'</div>'
 					+'<div class="description">'+value.summary+'</div>'
@@ -50,31 +56,37 @@ jQuery(document).ready(function($){
 		});
 	});
 
-	//---------------------------interested Button---------------------------------
+	//---------------------------Sort Dropdown---------------------------------
 	$(document).on({
-		click: function (e) {
-			e.preventDefault();
+		click: function () {
+			location = $(this).data("url-append");
+		}
+	}, '.sort-menu li');
+
+
+	//---------------------------Status Dropdown---------------------------------
+	$(document).on({
+		change: function () {
 			that = this
 			data_url = $(this).data("url");
-			data_value = $(this).data("value");
+			data_value = $(this).val();
 			$.ajax({
-				url: '/listings/interested',
+				url: '/listings/setstatus',
 				type: 'POST',
 				data: {url: data_url, set_value: data_value},
 				accepts: "application/json",
 				success: function(json) {
-					console.log(json)
 					if (json == 1){
-						$(that).data('value', 0).removeClass("fa-star-o").addClass("fa-star");
+						$(that).parents('.listing').addClass(data_value);
 					}else{
-						$(that).data('value', 1).removeClass("fa-star").addClass("fa-star-o");
+						$(that).parents('.listing').addClass(data_value);
 					}
 				}
 			});
 		}
-	}, '.interested');
+	}, '.status-dropdown');
 
-	//---------------------------interested Button---------------------------------
+	//---------------------------dismissed Button---------------------------------
 	$(document).on({
 		click: function (e) {
 			e.preventDefault();
@@ -87,7 +99,6 @@ jQuery(document).ready(function($){
 				data: {url: data_url, set_value: data_value},
 				accepts: "application/json",
 				success: function(json) {
-					console.log(json)
 					if (json == 1){
 						$(that).data('value', 0).removeClass("fa-times-circle-o").addClass("fa-times-circle").parents('.listing').addClass("dismissed");
 					}else{
@@ -99,28 +110,24 @@ jQuery(document).ready(function($){
 	}, '.dismiss');
 
 	//---------------------------Viewed Toggle---------------------------------
-	/*
 	$(document).on({
-		click: function (e) {
-			e.preventDefault();
+		click: function () {
 			that = this
 			data_url = $(this).attr("href");
-			data_value = 1;
 			$.ajax({
 				url: '/listings/viewed',
 				type: 'POST',
-				data: {url: data_url, set_value: data_value},
+				data: {url: data_url, set_value: 1},
 				accepts: "application/json",
 				success: function(json) {
-					console.log(json)
 					if (json == 1){
-						$(that).data('value', 0).removeClass("fa-star-o").addClass("fa-star");
+						$(that).parents('.listing').addClass("viewed");
 					}else{
-						$(that).data('value', 1).removeClass("fa-star").addClass("fa-star-o");
+						$(that).parents('.listing').removeClass("viewed");
 					}
 				}
 			});
 		}
 	}, '.listing-title');
-	*/
+	
 });
