@@ -5,9 +5,12 @@ def save_listings database_file, listings
 		db = SQLite3::Database.open database_file
 
 		listings.each do |listing|
-			db.execute("INSERT OR REPLACE INTO listings (url, title, summary, desc, employer, location, source, date_posted)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)", 
-            [listing.url, listing.title, listing.summary, listing.desc, listing.employer, listing.location, listing.source, listing.date_posted.to_s])
+			result = db.execute("select url from listings where url = \""+listing.url+"\"")
+			if result.length == 0
+				db.execute("INSERT INTO listings (url, title, summary, desc, employer, location, source, date_posted)
+	            VALUES (?, ?, ?, ?, ?, ?, ?, ?)", 
+	            [listing.url, listing.title, listing.summary, listing.desc, listing.employer, listing.location, listing.source, listing.date_posted.to_s])
+			end
 		end
 
 	else
@@ -29,7 +32,7 @@ def save_listings database_file, listings
 		SQL
 
 		listings.each do |listing|
-			db.execute("INSERT OR REPLACE INTO listings (url, title, summary, desc, employer, location, source, date_posted)
+			db.execute("INSERT INTO listings (url, title, summary, desc, employer, location, source, date_posted)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)", 
             [listing.url, listing.title, listing.summary, listing.desc, listing.employer, listing.location, listing.source, listing.date_posted.to_s])
 		end
