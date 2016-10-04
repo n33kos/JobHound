@@ -53,6 +53,10 @@ post '/jobs/scrape', :provides => :json do
 			"status" => listing.status
 		})
 	end
+
+	puts "----------Removing Duplicate Entries-----------"
+	remove_duplicate_entries "./sql/jobhound.sqlite"
+
 	halt 200, data.to_json
 end
 
