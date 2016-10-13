@@ -6,21 +6,23 @@ A local web app to scrape and manage job listings from configurable search URLs.
 - Gems:
 	- bundle
 	- sinatra
-	- launchy
 	- nokogiri
 	- sqlite3
 	- chronic
+	- whenever
 - Modules:
 	- open-uri
 	- openssl
 	- yaml
 	- json
 
-1. If you dont have the bundle gem installed run ```gem install bundle```
+1. If you dont have the bundle gem installed run ```$ gem install bundle```
 
-2. Run ```bundle install``` in the base directory to install any gem dependencies you may be missing
+2. Run ```$ bundle install``` in the base directory to install any gem dependencies you may be missing
 
-3. Run ```ruby jobhound.rb```. This will automatically start a local web server and navigate to http://localhost:4567 with JobHound running
+3. Navigate to the base directory and run ```$ whenever --update-crontab``` to update your crontab with the automatic scraper (optional)
+
+3. Run ```$ ruby jobhound.rb```. This will automatically start a local web server and navigate to http://localhost:4567 with JobHound running
 
 4. Configure scraping sources by modifying ```config```:
 	> - ```base_url``` - The base url for your scrape source. This is used for rebuilding partial urls.

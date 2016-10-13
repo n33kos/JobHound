@@ -37,6 +37,18 @@ header h1 a {
   opacity: 0.5;
   margin-bottom: 0px;
 }
+.listing.interested {
+  background: #ebccff;
+}
+.listing.applied {
+  background: #ccdcff;
+}
+.listing.followup {
+  background: #ccfffd;
+}
+.listing.interviewed {
+  background: #ccffdd;
+}
 .listing .listing-title:after {
   font: normal normal normal 14px/1 FontAwesome;
   text-decoration: none;

@@ -4,9 +4,19 @@ def save_listings database_file, listings
 	if File.file?(database_file)
 		db = SQLite3::Database.open database_file
 
+		puts "--------------Saving Listings---------------"
+		
 		result = db.execute("select url from listings")
 		listings.each do |listing|
-			if result.include? listing.url == false
+
+			listingexists = false
+			result.each do |res|
+				if res[0] == listing.url
+					listingexists = true
+				end
+			end
+
+			if listingexists == false
 				db.execute("INSERT INTO listings (url, title, summary, desc, employer, location, source, date_posted)
 	            VALUES (?, ?, ?, ?, ?, ?, ?, ?)", 
 	            [listing.url, listing.title, listing.summary, listing.desc, listing.employer, listing.location, listing.source, listing.date_posted.to_s])
@@ -159,6 +169,8 @@ def remove_duplicate_entries database_file
 	if File.file?(database_file)
 		db = SQLite3::Database.open database_file
 
+		puts "----------Removing Duplicate Entries-----------"
+
 		query1 = "select * from listings"
 		listings = []
 		db.execute( query1 ) do |row|
@@ -173,7 +185,7 @@ def remove_duplicate_entries database_file
 			end
 
 			if count > 1
-				query3 = "delete from listings where title like \""+row[1].to_s+"\" and employer like \""+row[4].to_s+"\" limit "+(count-1).to_s
+				query3 = "delete from listings where url in (select url from listings where title like \""+row[1].to_s+"\" and employer like \""+row[4].to_s+"\" order by date_posted DESC limit "+(count-1).to_s+")"
 				db.execute (query3)
 				puts "deleted "+(count-1).to_s+" duplicates for :"+row[1].to_s
 			end
