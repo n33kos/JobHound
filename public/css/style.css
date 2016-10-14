@@ -9,6 +9,18 @@ header h1 a {
   color: black;
   text-decoration: none;
 }
+#sort-menu {
+  position: absolute;
+  right: 0;
+  top: 5px;
+}
+.menu a {
+  text-decoration: none;
+}
+.menu .active {
+  text-decoration: underline;
+}
+/*-------------------Config Page----------------*/
 .configTextArea {
   height: 600px;
   width: 100%;
@@ -17,12 +29,6 @@ header h1 a {
   box-sizing: border-box;
   font-family: monospace;
 }
-#sort-menu {
-  position: absolute;
-  right: 0;
-  top: 5px;
-}
-
 /*---------------------LISTINGS----------------*/
 .listing {
   position: relative;

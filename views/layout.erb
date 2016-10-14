@@ -14,12 +14,12 @@
 		<header>
 			<h1 class="text-center"><a href="/" title="JobHound">JobHound</a><a href="/config" title="Configure JobHound" class="black inline"><i class="fa fa-cog font-16"></i></a></h1>
 			<div class="menu text-center">
-				<a href="/jobs" title="All Jobs">All Jobs</a>&nbsp;|
-				<a href="/interested" title="Interested">Interested</a>&nbsp;|
-				<a href="/applied" title="Applied">Applied</a>&nbsp;|
-				<a href="/followup" title="Followup">Followed Up</a>&nbsp;|
-				<a href="/interviewed" title="Interviewed">Interviewed</a>&nbsp;|
-				<a href="/dismissed" title="Dismissed">Dismissed</a>
+				<a href="/jobs" title="All Jobs" class="<%= request.path_info == "/jobs" ? "active" : nil %>">All Jobs</a>&nbsp;|
+				<a href="/interested" title="Interested" class="<%= request.path_info == "/interested" ? "active" : nil %>">Interested</a>&nbsp;|
+				<a href="/applied" title="Applied" class="<%= request.path_info == "/applied" ? "active" : nil %>">Applied</a>&nbsp;|
+				<a href="/followup" title="Followup" class="<%= request.path_info == "/followup" ? "active" : nil %>">Followed Up</a>&nbsp;|
+				<a href="/interviewed" title="Interviewed" class="<%= request.path_info == "/interviewed" ? "active" : nil %>">Interviewed</a>&nbsp;|
+				<a href="/dismissed" title="Dismissed" class="<%= request.path_info == "/dismissed" ? "active" : nil %>">Dismissed</a>
 			</div>
 		</header>
 		<%= yield %>
