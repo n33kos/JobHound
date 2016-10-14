@@ -119,3 +119,8 @@ get '/shutdown' do
 	Thread.new { sleep 1; Process.kill 'INT', Process.pid }
 	halt 200
 end
+
+get '/dedupe' do
+	remove_duplicate_entries relative_path+"/../sql/jobhound.sqlite"
+	halt 200
+end
