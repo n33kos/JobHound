@@ -185,7 +185,7 @@ def remove_duplicate_entries database_file
 			end
 
 			if count > 1
-				query3 = "delete from listings where url in (select url from listings where title like \""+row[1].to_s+"\" and employer like \""+row[4].to_s+"\" order by date_posted DESC limit "+(count-1).to_s+")"
+				query3 = "delete from listings where url in (select url from listings where title like \"%"+row[1].to_s+"%\" and employer like \"%"+row[4].to_s+"%\" order by date_posted limit "+(count-1).to_s+")"
 				db.execute (query3)
 				puts "deleted "+(count-1).to_s+" duplicates for :"+row[1].to_s
 			end
