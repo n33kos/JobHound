@@ -32,12 +32,18 @@
 	jQuery(document).ready(function(){
 
 		//hide dismissed by default for main page
-		$('.dismissed').slideUp();
+		$listings = $('.listing');
+		$dismissed = $('.dismissed');
+		$dismissed.slideUp();
+		$('.scrapeButton').html("Scrape Listings <i class=\"fa fa-database margin-left-5\"></i> ("+($listings.length-$dismissed.length)+")");
+		
 		$('.hide-button').change(function(){
 			if ($(this).is(':checked')) {
-				$('.dismissed').slideUp();
+				$dismissed.slideUp();
+				$('.scrapeButton').html("Scrape Listings <i class=\"fa fa-database margin-left-5\"></i> ("+($listings.length-$dismissed.length)+")");
 			}else{
-				$('.dismissed').slideDown();
+				$dismissed.slideDown();
+				$('.scrapeButton').html("Scrape Listings <i class=\"fa fa-database margin-left-5\"></i> ("+$listings.length+")");
 			}
 		});
 

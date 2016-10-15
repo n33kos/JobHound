@@ -17,6 +17,19 @@
 				<div style="font-size:12px;color:green;"><%= listing.employer %> - <%= listing.location %></div>
 				<div class="description"><%= listing.summary %></div>
 				<span class="source"><a href="<%= listing.source %>" target="_blank" class="break-word"><%= listing.source %></a></span>
+				<% if defined?showmessage %>
+					<%
+						if File.file?("./config/message.config")
+							file = File.open("./config/message.config", "r")
+							contents = file.read
+							file.close
+							
+							contents = contents.gsub(/(\{position\})/, listing.title.to_s.strip)
+							contents = contents.gsub(/(\{employer\})/, listing.employer.to_s.strip)
+						end
+					%>
+					<textarea class="message"><%= contents %></textarea>
+				<%end %>
 			</div>
 		<% end %>
 	<% end %>

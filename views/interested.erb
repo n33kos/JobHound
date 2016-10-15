@@ -2,6 +2,24 @@
 	<div class="mdl-cell mdl-cell--2-col"></div>
 	<div class="mdl-cell mdl-cell--8-col">
 		<hr>
-		<%= erb :listings_include, :locals => {:listings => $listings} %>
+		<div class="sort-block relative">
+			<button id="sort-menu" class="mdl-button mdl-js-button mdl-button--icon">
+				<i class="fa fa-sort"></i>
+			</button>
+			<ul class="sort-menu mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="sort-menu">
+				<li disabled class="mdl-menu__item">Sort By:</li>
+				<li class="mdl-menu__item" data-url-append="?orderby=title">Title A-Z</li>
+				<li class="mdl-menu__item" data-url-append="?orderby=title&direction=DESC">Title Z-A</li>
+				<li class="mdl-menu__item" data-url-append="?orderby=date_posted&direction=DESC">Newest</li>
+				<li class="mdl-menu__item" data-url-append="?orderby=date_posted">Oldest</li>
+				<li class="mdl-menu__item" data-url-append="?orderby=status">Status A-Z</li>
+				<li class="mdl-menu__item" data-url-append="?orderby=status&direction=DESC">Status Z-A</li>
+			</ul>
+		</div>
+		<div>
+			Showing <% if listings.kind_of?(Array) %><%= listings.length %><% else %>0<% end %> Interested
+		</div>
+		<hr>
+		<%= erb :listings_include, :locals => {:listings => $listings, :showmessage => true} %>
 	</div>
 </div>

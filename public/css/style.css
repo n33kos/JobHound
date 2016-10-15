@@ -44,10 +44,10 @@ header h1 a {
   margin-bottom: 0px;
 }
 .listing.interested {
-  background: #ebccff;
+  background: #ffcccc;
 }
 .listing.applied {
-  background: #ccdcff;
+  background: #fffdcc;
 }
 .listing.followup {
   background: #ccfffd;
@@ -93,6 +93,16 @@ header h1 a {
 }
 .listing .source a {
   color: #aaa;
+}
+.listing .message {
+  width: 100%;
+  transition: all 1s;
+  height: 32px;
+  opacity: 0.2;
+}
+.listing .message:focus, .listing .message:hover {
+  height: 128px;
+  opacity: 1;
 }
 /*-----------------HELPERS-------------*/
 .text-left {
