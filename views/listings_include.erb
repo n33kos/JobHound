@@ -26,6 +26,10 @@
 							
 							contents = contents.gsub(/(\{position\})/, listing.title.to_s.strip)
 							contents = contents.gsub(/(\{employer\})/, listing.employer.to_s.strip)
+							contents = contents.gsub(/(\{day\})/, Date.today.strftime("%e").to_s)
+							contents = contents.gsub(/(\{month\})/, Date.today.strftime("%B").to_s)
+							contents = contents.gsub(/(\{year\})/, Date.today.strftime("%Y").to_s)
+
 						end
 					%>
 					<textarea class="message"><%= contents %></textarea>
