@@ -16,9 +16,6 @@
 				<li class="mdl-menu__item" data-url-append="?orderby=status&direction=DESC">Status Z-A</li>
 			</ul>
 		</div>
-		<div class="pull-left">
-			<input type="checkbox" name="hide dismissed" checked="checked" class="hide-button"> Hide Dismissed
-		</div>
 		<form class="scrapeForm text-center" method="post">
 			<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent scrapeButton" type="submit">
 			  Scrape Listings <i class="fa fa-database margin-left-5"> (<% if listings.kind_of?(Array) %><%= listings.length %><% else %>0<% end %>)</i>
@@ -30,22 +27,7 @@
 </div>
 <script type="text/javascript">
 	jQuery(document).ready(function(){
-
-		//hide dismissed by default for main page
 		$listings = $('.listing');
-		$dismissed = $('.dismissed');
-		$dismissed.slideUp();
-		$('.scrapeButton').html("Scrape Listings <i class=\"fa fa-database margin-left-5\"></i> ("+($listings.length-$dismissed.length)+")");
-		
-		$('.hide-button').change(function(){
-			if ($(this).is(':checked')) {
-				$dismissed.slideUp();
-				$('.scrapeButton').html("Scrape Listings <i class=\"fa fa-database margin-left-5\"></i> ("+($listings.length-$dismissed.length)+")");
-			}else{
-				$dismissed.slideDown();
-				$('.scrapeButton').html("Scrape Listings <i class=\"fa fa-database margin-left-5\"></i> ("+$listings.length+")");
-			}
-		});
-
+		$('.scrapeButton').html("Scrape Listings <i class=\"fa fa-database margin-left-5\"></i> ("+($listings.length)+")");
 	});
 </script>

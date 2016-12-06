@@ -16,9 +16,11 @@ header h1 a {
 }
 .menu a {
   text-decoration: none;
+  padding: 0 5px;
 }
 .menu .active {
   text-decoration: underline;
+  font-weight: bold;
 }
 /*-------------------Config Page----------------*/
 .configTextArea {
@@ -44,7 +46,7 @@ header h1 a {
   margin-bottom: 0px;
 }
 .listing.interested {
-  background: #ffcccc;
+  background: #ffcc99;
 }
 .listing.applied {
   background: #fffdcc;
@@ -76,7 +78,7 @@ header h1 a {
   position: absolute;
   right: 10px;
   top: 15px;
-  color: #D0D0D0;
+  color: #e64040;
 }
 .listing h4 {
   margin: 0;
