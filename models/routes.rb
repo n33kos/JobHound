@@ -28,7 +28,7 @@ post '/jobs/scrape', :provides => :json do
 	$listings = aggregate_listings sources
 	save_listings relative_path+"/../sql/jobhound.sqlite", $listings
 	remove_duplicate_entries relative_path+"/../sql/jobhound.sqlite"
-	$listings = get_all_listings relative_path+"/../sql/jobhound.sqlite", params[:orderby], params[:direction]
+	$listings = get_new_listings relative_path+"/../sql/jobhound.sqlite", params[:orderby], params[:direction]
 
 	while (!$listings.kind_of?(Array) and $listings != false)
 	  sleep(1)
@@ -58,6 +58,14 @@ post '/jobs/scrape', :provides => :json do
 
 
 	halt 200, data.to_json
+end
+
+get '/new' do
+  $listings = get_new_listings relative_path+"/../sql/jobhound.sqlite", params[:orderby], params[:direction]
+	while (!$listings.kind_of?(Array) and $listings != false)
+	  sleep(1)
+	end
+  erb :jobs, :locals => {:listings => $listings}
 end
 
 get '/interested' do
